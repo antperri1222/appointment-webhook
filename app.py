@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify
 import requests
+import os   # <-- Make sure you import os to get your env variable!
 
 app = Flask(__name__)
 
-# Your Calendly Personal Access Token
-CALENDLY_API_KEY = eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNzUyNjM2OTE5LCJqdGkiOiI3MzYzYjY1My1iODY5LTQ5OGUtYjRmMC0zMzViNjQ0M2UzNjIiLCJ1c2VyX3V1aWQiOiJhMjc1NzNlYi04YmY5LTQ3YWUtYWQwOC1hMjBhOWJkZTdhZDQifQ.bAhfS_J9qyERXRvRhlMETw1fx9F3KSVs-uG8j4gw3MhlFEwCParpNMX4Z4Ftl1QOGf313SUh6M2WMW0pWJmgWQ 
+# Get your Calendly API Key from Render environment variables
+CALENDLY_API_KEY = os.environ.get("eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNzUyNjM2OTE5LCJqdGkiOiI3MzYzYjY1My1iODY5LTQ5OGUtYjRmMC0zMzViNjQ0M2UzNjIiLCJ1c2VyX3V1aWQiOiJhMjc1NzNlYi04YmY5LTQ3YWUtYWQwOC1hMjBhOWJkZTdhZDQifQ.bAhfS_J9qyERXRvRhlMETw1fx9F3KSVs-uG8j4gw3MhlFEwCParpNMX4Z4Ftl1QOGf313SUh6M2WMW0pWJmgWQ")
 
 @app.route("/book-appointment", methods=["POST"])
 def book_appointment():
@@ -39,7 +40,10 @@ def book_appointment():
         booking_url = calendly_response.json()["resource"]["booking_url"]
         return jsonify({"booking_url": booking_url})
     else:
-        return jsonify({"error": "Failed to create link", "details": calendly_response.json()}), 400
+        return jsonify({
+            "error": "Failed to create link",
+            "details": calendly_response.json()
+        }), 400
 
 if __name__ == "__main__":
     app.run(debug=True)
